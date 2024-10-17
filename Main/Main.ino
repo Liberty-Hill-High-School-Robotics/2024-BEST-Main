@@ -50,9 +50,10 @@ void loop() {
   //refresh data on gizmo
   gizmo.refresh();
 
-//no comments past this point ---------------------------------------------------------------------------------------------------------
-  //COMMENT HERE
+  //Create a boolean that is true when the gizmo detects the start button is pressed
   bool start_button_pressed = gizmo.getButton(GIZMO_BUTTON_START);
+  
+  //If the aforementioned boolean & (not) _ then switch from tank mode to arcade or vise-versa
   if (start_button_pressed && !prev_start_button) {
     if (mode == TANK_MODE) {
       mode = ARCADE_MODE;
@@ -61,22 +62,30 @@ void loop() {
       mode = TANK_MODE;
     }
   }
+  //create a secondary boolean that will represent the last value of the start button (from last loop)
   prev_start_button = start_button_pressed;
 
+//tank drive code (each joystick controls a side of the robot)
   if (mode == TANK_MODE) {
-  //COMMENT HERE
-    motor_left.write(map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, 0, 180));
-    motor_right.write(map(gizmo.getAxis(GIZMO_AXIS_RY), 0, 255, 0, 180));
-  }
-  else if (mode == ARCADE_MODE) {
-  //COMMENT HERE
-    int speed = map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, -90, 90);
-    int steering = map(gizmo.getAxis(GIZMO_AXIS_LX), 0, 255, -90, 90);
-    motor_left.write(constrain(speed - steering, -90, 90) + 90);
-    motor_right.write(constrain(speed + steering, -90, 90) + 90);
+    motor_drive_left.write(map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, 0, 180));
+    motor_drive_right.write(map(gizmo.getAxis(GIZMO_AXIS_RY), 0, 255, 0, 180));
+    //.write gives the motor a value to run at
+    //.map will truncate the outputed values to a range
+    //for example, a range of 0->1 can be mapped to 0->255; a value of .5 in the first example will now be 127.5
   }
 
-  //COMMENT HERE
+  //arcade mode code
+  else if (mode == ARCADE_MODE) {
+    //map values for speed and steering to be used later
+    int speed = map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, -90, 90);
+    int steering = map(gizmo.getAxis(GIZMO_AXIS_LX), 0, 255, -90, 90);
+    //simple math to combine speed + steering (allows for 0 degree turning and turning while moving)
+    motor_drive_left.write(constrain(speed - steering, -90, 90) + 90);
+    motor_drive_right.write(constrain(speed + steering, -90, 90) + 90);
+  }
+
+  //set task motor to x value when x button pressed
+  //this code hasn't been edited
   if (gizmo.getButton(GIZMO_BUTTON_RT)) {
     motor_task.write(0);
   }
@@ -87,7 +96,7 @@ void loop() {
     motor_task.write(90);
   }
 
-  //COMMENT HERE
+  //same here
   if (gizmo.getButton(GIZMO_BUTTON_LT)) {
     servo_task.write(0);
   }
