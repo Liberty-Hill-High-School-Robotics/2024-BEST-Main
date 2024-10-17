@@ -17,9 +17,8 @@ Servo servo_dumptruck;
 Servo servo_claw;
 
 //tankdrive
-//arcade drive
 //dumptruck open/close (toggle)
-//claw open/close (while held)
+
 //arm go up
 //arm go down
 //arm constant voltage
@@ -94,6 +93,27 @@ void loop() {
     motor_drive_left.write(outputL);
     motor_drive_right.write(outputR);
   }
+
+  //Arm commands
+  //up, down, and constant voltage
+  //need to add motor commands
+  //while r shoulder button pressed, set servo to 45 degrees
+  while(gizmo.getButon(GIZMO_BUTTON_RSHOULDER)){
+    servo_arm_joint.write(45);
+  }
+  while(!gizmo.getButton(GIZMO_BUTTON_RSHOULDER)){
+    servo_arm_joint.write(0);
+  }
+
+  //Claw Commands
+  //code for claw opening and closing
+  if (gizmo.getButton(GIZMO_BUTTON_LSHOULDER)){
+    servo_claw.write(45);
+  }
+  if (!gizmo.getButton(GIZMO_BUTTON_LSHOULDER)){
+    servo_claw.write(0);
+  }
+
 
   //set task motor to x value when x button pressed
   //this code hasn't been edited
