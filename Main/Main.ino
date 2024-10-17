@@ -14,7 +14,15 @@ Servo motor_drive_right;
 Servo motor_arm_base;
 Servo servo_arm_joint;
 Servo servo_dumptruck;
-Servo servo_claw
+Servo servo_claw;
+
+//tankdrive
+//arcade drive
+//dumptruck open/close (toggle)
+//claw open/close (while held)
+//arm go up
+//arm go down
+//arm constant voltage
 
 //create variables (#define should only be used in read-only variables, otherwise use int, bool, etc.)
 #define TANK_MODE 0
@@ -76,12 +84,15 @@ void loop() {
 
   //arcade mode code
   else if (mode == ARCADE_MODE) {
-    //map values for speed and steering to be used later
-    int speed = map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, -90, 90);
-    int steering = map(gizmo.getAxis(GIZMO_AXIS_LX), 0, 255, -90, 90);
+    //code that makes drive motors run during arcade mode
+    int speed = map(gizmo.getAxis(GIZMO_AXIS_LY), 0, 255, -90, 90 );
+    int steering = map(gizmo.getAxis(GIZMO_AXIS_RX), 0, 255, -90, 90 );
     //simple math to combine speed + steering (allows for 0 degree turning and turning while moving)
-    motor_drive_left.write(constrain(speed - steering, -90, 90) + 90);
-    motor_drive_right.write(constrain(speed + steering, -90, 90) + 90);
+
+    int outputL = constrain(speed - steering, -90, 90) + 90;
+    int outputR = constrain(speed + steering, -90, 90) + 90;
+    motor_drive_left.write(outputL);
+    motor_drive_right.write(outputR);
   }
 
   //set task motor to x value when x button pressed
