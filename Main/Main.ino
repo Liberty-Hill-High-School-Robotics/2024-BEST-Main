@@ -9,7 +9,7 @@ Gizmo gizmo;
 //use the format motor/servo_subsystem_descriptor
 //all lowercase
 //like: motor_drive_left
-//descriptor is optional (see line 14)
+//descriptor is optional (see line 18)
 Servo motor_drive_left;
 Servo motor_drive_right;
 Servo motor_arm_base;
@@ -116,6 +116,7 @@ void loop() {
   while(!gizmo.getButton(GIZMO_BUTTON_RSHOULDER)){
     servo_arm_joint.write(0);
   }
+  //create a command for the base joint of the arm using the PID loop
 
   //Claw Commands
   //code for claw opening and closing
@@ -126,27 +127,5 @@ void loop() {
     servo_claw.write(0);
   }
 
-
-  //set task motor to x value when x button pressed
-  //this code hasn't been edited
-  if (gizmo.getButton(GIZMO_BUTTON_RT)) {
-    motor_task.write(0);
-  }
-  else if (gizmo.getButton(GIZMO_BUTTON_RSHOULDER)) {
-    motor_task.write(180);
-  }
-  else {
-    motor_task.write(90);
-  }
-
-  //same here
-  if (gizmo.getButton(GIZMO_BUTTON_LT)) {
-    servo_task.write(0);
-  }
-  else if (gizmo.getButton(GIZMO_BUTTON_LSHOULDER)) {
-    servo_task.write(180);
-  }
-  else {
-    servo_task.write(90);
-  }
+  //create dumptruck command
 }
