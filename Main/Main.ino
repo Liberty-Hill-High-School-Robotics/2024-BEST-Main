@@ -110,7 +110,7 @@ void loop() {
   //up, down, and constant voltage
   //need to add motor commands
   //while r shoulder button pressed, set servo to 45 degrees
-  while(gizmo.getButon(GIZMO_BUTTON_RSHOULDER)){
+  while(gizmo.getButton(GIZMO_BUTTON_RSHOULDER)){
     servo_arm_joint.write(45);
   }
   while(!gizmo.getButton(GIZMO_BUTTON_RSHOULDER)){
@@ -128,4 +128,10 @@ void loop() {
   }
 
   //create dumptruck command
+  while (gizmo.getButton(GIZMO_BUTTON_Y)){
+    servo_dumptruck.write(45)
+  }
+  while (!gizmo.getButton(GIZMO_BUTTON_Y)){
+    servo_dumptruck.write(0)
+  }
 }
