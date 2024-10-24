@@ -1,6 +1,7 @@
 //0463 BEST Code
 #include <Gizmo.h> //"Import" Gizmo (Control Board)
 #include <Servo.h> //"Import" Servo (Motors are also defined as servos)
+#include <PID_v1.h> //import pid
 
 //create instances for gizmo, motors, and servos
 Gizmo gizmo;
@@ -28,12 +29,20 @@ Servo servo_claw;
 #define ARCADE_MODE 1
 int mode = TANK_MODE;
 bool prev_start_button = false;
+//create PID loop variables
+double kP = 1;
+double kI = 1;
+double KD = 1;
+PID armPID(&input, &output, &setpoint, kP, kI, KD);
 
 
 //Outside of loop code:
 void setup() {
   //start the gizmo
   gizmo.begin();
+  input = digitalRead(POT_INPUT);
+  //define setpoint with button inputs
+  armPID.SetMode(AUTOMATIC);
 
   //define which motor/servo is assigned to which pin (Motors/Servos should have a seperate pin)
   motor_drive_left.attach(GIZMO_MOTOR_1);
@@ -56,6 +65,9 @@ void loop() {
 
   //refresh data on gizmo
   gizmo.refresh();
+  input = digitalRead(POT_INPUT);
+  armPID.Compute();
+  motor_arm_base.write(output);
 
   //Create a boolean that is true when the gizmo detects the start button is pressed
   bool start_button_pressed = gizmo.getButton(GIZMO_BUTTON_START);
