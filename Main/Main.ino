@@ -1,7 +1,14 @@
 //0463 BEST Code
-#include <Gizmo.h> //"Import" Gizmo (Control Board)
+#include "Gizmo.h" //"Import" Gizmo (Control Board)
 #include <Servo.h> //"Import" Servo (Motors are also defined as servos)
-#include <PID_v1.h> //import pid
+//#include <PID_v1.h> //import pid
+
+Servo motor_drive_left;
+Servo motor_drive_right;
+Servo motor_arm_base;
+Servo servo_arm_joint;
+Servo servo_dumptruck;
+Servo servo_claw;
 
 //create instances for gizmo, motors, and servos
 Gizmo gizmo;
@@ -10,12 +17,7 @@ Gizmo gizmo;
 //all lowercase
 //like: motor_drive_left
 //descriptor is optional (see line 18)
-Servo motor_drive_left;
-Servo motor_drive_right;
-Servo motor_arm_base;
-Servo servo_arm_joint;
-Servo servo_dumptruck;
-Servo servo_claw;
+
 
 //tankdrive
 //dumptruck open/close (toggle)
@@ -33,29 +35,37 @@ bool prev_start_button = false;
 double kP = 1;
 double kI = 1;
 double KD = 1;
-PID armPID(&input, &output, &setpoint, kP, kI, KD);
+int testing = 0;
+//PID armPID(&input, &output, &setpoint, kP, kI, KD);
 
 
 //Outside of loop code:
 void setup() {
   //start the gizmo
   gizmo.begin();
-  input = digitalRead(POT_INPUT);
+  //input = digitalRead(POT_INPUT);
   //define setpoint with button inputs
-  armPID.SetMode(AUTOMATIC);
+  //armPID.SetMode(AUTOMATIC);
+  //define pinmodes
+  pinMode(GIZMO_MOTOR_1, OUTPUT);
+  pinMode(GIZMO_MOTOR_2, OUTPUT);
+  pinMode(GIZMO_MOTOR_3, OUTPUT);
+  //pinMode(GIZMO_SERVO_1, OUTPUT);
+  pinMode(GIZMO_SERVO_2, OUTPUT);
+  //pinMode(GIZMO_SERVO_3, OUTPUT);
+
+  //define the pinMode for the built-in LED on the Raspberry Pis (RPIs)
+  pinMode(LED_BUILTIN, OUTPUT);
 
   //define which motor/servo is assigned to which pin (Motors/Servos should have a seperate pin)
   motor_drive_left.attach(GIZMO_MOTOR_1);
   motor_drive_right.attach(GIZMO_MOTOR_2);
 
   motor_arm_base.attach(GIZMO_MOTOR_3);
-  servo_arm_joint.attach(GIZMO_SERVO_1);
+  //servo_arm_joint.attach(GIZMO_SERVO_1);
   
   servo_dumptruck.attach(GIZMO_SERVO_2);
-  servo_claw.attach(GIZMO_SERVO_3);
-
-  //define the pinMode for the built-in LED on the Raspberry Pis (RPIs)
-  pinMode(LED_BUILTIN, OUTPUT);
+  //servo_claw.attach(GIZMO_SERVO_3);
 }
 
 //this code will be looped forever
@@ -65,9 +75,9 @@ void loop() {
 
   //refresh data on gizmo
   gizmo.refresh();
-  input = digitalRead(POT_INPUT);
-  armPID.Compute();
-  motor_arm_base.write(output);
+  //input = digitalRead(POT_INPUT);
+  //armPID.Compute();
+  //motor_arm_base.write(output);
 
   //Create a boolean that is true when the gizmo detects the start button is pressed
   bool start_button_pressed = gizmo.getButton(GIZMO_BUTTON_START);
@@ -106,32 +116,66 @@ void loop() {
     motor_drive_right.write(outputR);
   }
 
+
+  if(gizmo.getButton(GIZMO_BUTTON_A) && gizmo.getButton(GIZMO_BUTTON_B)){
+    motor_drive_left.write(15);
+    motor_drive_right.write(15);
+    //127- backwards slow
+    //255 - forwards
+    //-255 - forwards
+    //0 - off
+    //90 - nothing
+    //15 - forwards
+    //5 - forwards
+    
+    /*
+    delay(1000);
+    motor_drive_left.write(0);
+    motor_drive_right.write(0);
+    delay(1000);
+    motor_drive_left.write(1);
+    motor_drive_right.write(1);
+    delay(1000);
+    motor_drive_left.write(0);
+    motor_drive_right.write(0);
+    */
+        
+  }
+
   //Arm commands
   //up, down, and constant voltage
   //need to add motor commands
   //while r shoulder button pressed, set servo to 45 degrees
-  while(gizmo.getButton(GIZMO_BUTTON_RSHOULDER)){
+
+  
+  if (gizmo.getButton(GIZMO_BUTTON_RSHOULDER)){
     servo_arm_joint.write(45);
   }
-  while(!gizmo.getButton(GIZMO_BUTTON_RSHOULDER)){
+  if (!gizmo.getButton(GIZMO_BUTTON_RSHOULDER)){
     servo_arm_joint.write(0);
   }
+  
   //create a command for the base joint of the arm using the PID loop
 
   //Claw Commands
   //code for claw opening and closing
+  
   if (gizmo.getButton(GIZMO_BUTTON_LSHOULDER)){
     servo_claw.write(45);
   }
   if (!gizmo.getButton(GIZMO_BUTTON_LSHOULDER)){
     servo_claw.write(0);
   }
+  
 
   //create dumptruck command
-  while (gizmo.getButton(GIZMO_BUTTON_Y)){
-    servo_dumptruck.write(45)
+  
+  if (gizmo.getButton(GIZMO_BUTTON_Y)){
+    servo_dumptruck.write(45);
   }
-  while (!gizmo.getButton(GIZMO_BUTTON_Y)){
-    servo_dumptruck.write(0)
+  if (!gizmo.getButton(GIZMO_BUTTON_Y)){
+    servo_dumptruck.write(0);
   }
+  
+  
 }
