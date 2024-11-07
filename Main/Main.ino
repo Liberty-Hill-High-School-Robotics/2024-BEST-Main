@@ -62,10 +62,9 @@ void setup() {
   motor_drive_right.attach(GIZMO_MOTOR_2);
 
   motor_arm_base.attach(GIZMO_MOTOR_3);
-  //servo_arm_joint.attach(GIZMO_SERVO_1);
   
   servo_dumptruck.attach(GIZMO_SERVO_2);
-  //servo_claw.attach(GIZMO_SERVO_3);
+  servo_claw.attach(GIZMO_SERVO_1);
 }
 
 //this code will be looped forever
@@ -117,9 +116,7 @@ void loop() {
   }
 
 
-  if(gizmo.getButton(GIZMO_BUTTON_A) && gizmo.getButton(GIZMO_BUTTON_B)){
-    motor_drive_left.write(15);
-    motor_drive_right.write(15);
+  if(gizmo.getButton(GIZMO_BUTTON_LEFTSTICK) && gizmo.getButton(GIZMO_BUTTON_B)){
     //127- backwards slow
     //255 - forwards
     //-255 - forwards
@@ -127,41 +124,47 @@ void loop() {
     //90 - nothing
     //15 - forwards
     //5 - forwards
-    
-    /*
+    //130 backwards
+
+    delay(2000);
+    motor_drive_left.write(255);
+    motor_drive_right.write(255);
     delay(1000);
-    motor_drive_left.write(0);
-    motor_drive_right.write(0);
+    motor_drive_left.write(90);
+    motor_drive_right.write(90);
     delay(1000);
-    motor_drive_left.write(1);
-    motor_drive_right.write(1);
-    delay(1000);
-    motor_drive_left.write(0);
-    motor_drive_right.write(0);
-    */
+    motor_drive_left.write(130);
+    motor_drive_right.write(130);
+    delay(2000);
+    motor_drive_left.write(90);
+    motor_drive_right.write(90);
         
   }
 
   //Arm commands
   //up, down, and constant voltage
+  if (gizmo.getButton(GIZMO_BUTTON_A)){
+    motor_arm_base.write(0);
+  }
+  if (gizmo.getButton(GIZMO_BUTTON_Y)){
+    motor_arm_base.write(180);
+  }
+
+  if (!gizmo.getButton(GIZMO_BUTTON_A)){
+    if (!gizmo.getButton(GIZMO_BUTTON_Y)){
+      motor_arm_base.write(90);
+    }
+  }
   //need to add motor commands
   //while r shoulder button pressed, set servo to 45 degrees
 
-  
-  if (gizmo.getButton(GIZMO_BUTTON_RSHOULDER)){
-    servo_arm_joint.write(45);
-  }
-  if (!gizmo.getButton(GIZMO_BUTTON_RSHOULDER)){
-    servo_arm_joint.write(0);
-  }
-  
   //create a command for the base joint of the arm using the PID loop
 
   //Claw Commands
   //code for claw opening and closing
   
   if (gizmo.getButton(GIZMO_BUTTON_LSHOULDER)){
-    servo_claw.write(45);
+    servo_claw.write(180);
   }
   if (!gizmo.getButton(GIZMO_BUTTON_LSHOULDER)){
     servo_claw.write(0);
@@ -170,10 +173,10 @@ void loop() {
 
   //create dumptruck command
   
-  if (gizmo.getButton(GIZMO_BUTTON_Y)){
-    servo_dumptruck.write(45);
+  if (gizmo.getButton(GIZMO_BUTTON_X)){
+    servo_dumptruck.write(180);
   }
-  if (!gizmo.getButton(GIZMO_BUTTON_Y)){
+  if (!gizmo.getButton(GIZMO_BUTTON_X)){
     servo_dumptruck.write(0);
   }
   
