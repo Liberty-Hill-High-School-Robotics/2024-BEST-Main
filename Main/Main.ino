@@ -50,7 +50,7 @@ void setup() {
   pinMode(GIZMO_MOTOR_1, OUTPUT);
   pinMode(GIZMO_MOTOR_2, OUTPUT);
   pinMode(GIZMO_MOTOR_3, OUTPUT);
-  //pinMode(GIZMO_SERVO_1, OUTPUT);
+  pinMode(GIZMO_SERVO_1, OUTPUT);
   pinMode(GIZMO_SERVO_2, OUTPUT);
   //pinMode(GIZMO_SERVO_3, OUTPUT);
 
@@ -144,10 +144,10 @@ void loop() {
   //Arm commands
   //up, down, and constant voltage
   if (gizmo.getButton(GIZMO_BUTTON_A)){
-    motor_arm_base.write(0);
+    motor_arm_base.write(180);
   }
   if (gizmo.getButton(GIZMO_BUTTON_Y)){
-    motor_arm_base.write(180);
+    motor_arm_base.write(0);
   }
 
   if (!gizmo.getButton(GIZMO_BUTTON_A)){
